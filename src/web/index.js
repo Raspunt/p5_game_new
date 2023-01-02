@@ -10,7 +10,7 @@ const expressApp = express();
 routes(expressApp)
 const httpApp = createServer(expressApp); 
 
-expressApp.use(express.static(path.resolve('public')))
+expressApp.use(express.static(path.resolve('static')))
 
 
 
