@@ -1,0 +1,3 @@
+
+
+let canvasSize = 600
