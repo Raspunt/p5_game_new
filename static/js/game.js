@@ -1,15 +1,13 @@
 
 let game_canvas = null ;
-
+let player ;
 
 
 function setup() {
     game_canvas =  createCanvas(windowWidth, windowHeight-10);
     game_canvas.parent('game_canvas')
 
-    let player = new Bblob(windowWidth/2,windowHeight/2,200);
-    console.log(socket_id);
-    socket.emit('create_player',player)
+    player = new Bblob(windowWidth/2,windowHeight/2,200);
 
 }
   
@@ -19,21 +17,23 @@ function draw() {
     // player.draw()
     // player.followMouse()
 
+    player.UpdateMousePos()
 
-    player_list.forEach(player =>{
 
-        let pos = player[1]
-        let netPlayer = new Bblob(pos.x,pos.y,pos.r)
-        netPlayer.draw()
-        netPlayer.followMouse()
 
-        console.log(netPlayer.x,netPlayer.y);
+    player_list.forEach((pl)=>{
 
-        socket.emit('update_player',player)
+
+        let plBlob = new Bblob(
+            pl.pos.x,
+            pl.pos.y,
+            pl.pos.r
+            )
         
+        plBlob.draw()
+
 
     })
-
 
 }
 

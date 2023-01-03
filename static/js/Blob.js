@@ -12,8 +12,16 @@ class Bblob{
         ellipse(this.x,this.y,this.r,this.r)
     }
 
-    sendMousePos(){
-        socket.emit('mouse_pos', this)
+    UpdateMousePos(){
+
+        let pos = {
+            x:mouseX,
+            y:mouseY,
+            r:this.r
+
+        }
+
+        socket.emit('updatePlayer',pos)
     }
 
     setRandomColor(){

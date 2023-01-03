@@ -6,9 +6,10 @@ let player_list = []
 
 
 
-socket.on('players_list', (players) => {
+socket.on('broadcastPlayers', (players) => {
 
     player_list = players
     
 });
+
 
