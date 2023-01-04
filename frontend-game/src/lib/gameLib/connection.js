@@ -32,7 +32,7 @@ export class connection {
                 })
             });
             this.game.players = players;
-            console.log(data, this.game.ownPlayer);
+            // console.log(data, this.game.ownPlayer);
         })
 
         this.socket.on('playerCreate', (data) => {
@@ -42,7 +42,7 @@ export class connection {
             };
 
             this.game.ownPlayer.sphere.color = "red"
-            console.log(data);
+            //console.log(data);
         })
     }
 }
