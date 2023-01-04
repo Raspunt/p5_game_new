@@ -57,9 +57,9 @@ function connectionHandler(socket) {
         }
     };
 
-    // if (findByData(playerData)) {
-    //     return;
-    // }
+    if (findByData(playerData)) {
+        return;
+    }
 
     console.log('Player connected');
 
