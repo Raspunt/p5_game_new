@@ -12,7 +12,7 @@ function startServer() {
     httpApp.listen(process.env.HTTP_PORT, () => {
         io = new Server(httpApp, {
             cors: {
-                origin: "http://localhost:8080",
+                origin: process.env.HOST_ORIGIN,
                 methods: ["GET", "POST"]
             }
         });
