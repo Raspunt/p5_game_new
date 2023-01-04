@@ -1,49 +1,63 @@
 <template>
-  <div class="">
-
-    <vue-p5 id="game_canvas" v-on="{setup, draw}"></vue-p5>
-
+  <div ref="game" class="game_canvas">
+    <button class="absolute" @click="t1">aa1</button>
+    <canvas
+      ref="canvas"
+      class="canvas"
+      :width="width"
+      :height="height"
+    ></canvas>
   </div>
 </template>
 
 <script>
-
-import * as p5 from 'p5'
-
+import Game from "@/lib/gameLib/index.js";
 
 export default {
-  name: 'MainPage',
-  computed:{
-    gameHeight(){
-      return 500;
-    },
-    gameWidth(){
-      return 500;
-    }
+  name: "MainPage",
+  components: {},
+  data() {
+    return {
+      width: 500,
+      height: 500,
+      game: null,
+    };
   },
-
-  created(){
-    p5.createCanvas(100,100)
-  }
-
-
-
-
-
-}
-
-
+  methods: {
+    t1() {},
+    updateSize() {
+      this.width = this.$refs.game.clientWidth;
+      this.height = this.$refs.game.clientHeight;
+    },
+  },
+  mounted() {
+    this.updateSize();
+    this.game = new Game(this.$refs.canvas);
+    window.addEventListener("resize", this.updateSize);
+    this.game.start();
+  },
+  unmounted() {
+    window.removeEventListener("resize", this.updateSize);
+  },
+};
 </script>
 
 <style scoped>
-
-.wellcomeText{
+.wellcomeText {
   color: white;
-  font-size:32px;
+  font-size: 32px;
 }
 
-#game_canvas{
+.game_canvas {
+  overflow: hidden;
+  display: block;
   height: 100vh;
+  width: 100vw;
 }
-
+.canvas {
+  display: block;
+}
+.absolute {
+  position: absolute;
+}
 </style>

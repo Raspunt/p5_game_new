@@ -3,30 +3,26 @@
 </template>
 
 <script>
-import MainPage from './components/MainPage.vue'
+import MainPage from "./components/MainPage.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    MainPage
-  }
-}
+    MainPage,
+  },
+};
 </script>
 
 <style>
+@import "@/assets/css/reset.css";
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
-
 }
 
-body{
+body {
   background-color: #2c3e50;
   padding: 0;
   margin: 0;
 }
-
-
-
-
-
 </style>
