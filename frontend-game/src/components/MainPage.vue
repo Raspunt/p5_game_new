@@ -11,8 +11,7 @@
 </template>
 
 <script>
-import Game from "@/lib/gameLib/index.js";
-
+import Game from "@/lib/gameLib";
 export default {
   name: "MainPage",
   components: {},
@@ -32,8 +31,8 @@ export default {
   },
   mounted() {
     this.updateSize();
-    this.game = new Game(this.$refs.canvas);
     window.addEventListener("resize", this.updateSize);
+    this.game = new Game(this.$refs.canvas);
     this.game.start();
   },
   unmounted() {

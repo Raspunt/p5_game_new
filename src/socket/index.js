@@ -1,87 +1,93 @@
+import { Server } from "socket.io";
 
-import { player_list } from "./config.js"
+class Socket {
 
+    /** 
+     * Context canvas
+     * @type { Server }
+     */
+    io = null
 
-function findByData(playerData) {
-    return player_list.find(player => player.ip == playerData.ip);
-}
+    playerList = [];
 
-function findIndexById(remote_id) {
-    return player_list.findIndex((player => player.id == remote_id))
-}
-
-function disconnectHandler(socket) {
-    player_list.splice(findIndexById(socket.id), 1);
-    console.log(player_list);
-    console.log('Disconnected player is dead');
-}
-
-
-function updatePlayerHandler(socket, mousePos) {
-    player_list[findIndexById(socket.id)].pos = {
-        x: mousePos.x,
-        y: mousePos.y,
-        r: mousePos.r
-    };
-
-}
-
-function controlHandler(socket) {
-
-    socket.on('playerMovementUp', () => {
-        player_list[findIndexById(socket.id)].pos.y -= 5;
-    });
-
-    socket.on('playerMovementDown', () => {
-        player_list[findIndexById(socket.id)].pos.y += 5;
-    });
-
-    socket.on('playerMovementLeft', () => {
-        player_list[findIndexById(socket.id)].pos.x -= 5;
-    });
-
-    socket.on('playerMovementRight', () => {
-        player_list[findIndexById(socket.id)].pos.x += 5;
-    });
-}
-
-function connectionHandler(socket) {
-
-    const playerData = {
-        id: socket.id,
-        ip: socket.handshake.address,
-        pos: {
-            x: 200,
-            y: 200,
-            r: 50
-        }
-    };
-
-    if (findByData(playerData)) {
-        return;
+    /**
+     * Construct Socket Handler
+     * @param {Server} io Socket Server
+     */
+    constructor(io) {
+        this.io = io
     }
 
-    console.log('Player connected');
+    findByData(playerData) {
+        return this.playerList.find(player => player.ip == playerData.ip);
+    }
 
-    player_list.push(playerData);
+    findIndexById(remote_id) {
+        return this.playerList.findIndex((player => player.id == remote_id))
+    }
 
-    socket.emit('playerCreate', playerData);
-    controlHandler(socket)
-    socket.on('disconnect', disconnectHandler);
-    socket.on('updatePlayer', (mousePos) => {
-        updatePlayerHandler(socket, mousePos);
-    });
+    disconnectHandler(playerData) {
+        this.playerList.splice(this.findIndexById(playerData.id), 1);
 
-};
+        this.io.sockets.emit('unsetPlayer', playerData); // Говорим всем что пользователь вышел с такими данными
+
+        console.log('Disconnected player is dead ' + playerData.id);
+    }
+
+    controlHandler(socket) {
+
+        socket.on('playerMovementUp', () => {
+            this.playerList[this.findIndexById(socket.id)].pos.y -= 5;
+        });
+
+        socket.on('playerMovementDown', () => {
+            this.playerList[this.findIndexById(socket.id)].pos.y += 5;
+        });
+
+        socket.on('playerMovementLeft', () => {
+            this.playerList[this.findIndexById(socket.id)].pos.x -= 5;
+        });
+
+        socket.on('playerMovementRight', () => {
+            this.playerList[this.findIndexById(socket.id)].pos.x += 5;
+        });
+    }
+
+    connectionHandler(socket) {
+
+        const playerData = {
+            id: socket.id,
+            ip: socket.handshake.address,
+            pos: {
+                x: 200,
+                y: 200,
+                r: 50
+            }
+        };
+
+        // if (this.findByData(playerData)) {
+        //     return;
+        // }
 
 
+        console.log('Player connected');
 
-export default function initSocket(io) {
-    io.on('connection', connectionHandler);
+        this.playerList.push(playerData);
 
-    setInterval(() => {
-        io.sockets.emit('broadcastPlayers', player_list)
-    }, 1)
+        this.io.sockets.emit('setPlayer', playerData);
 
+        socket.emit('setPlayers', this.playerList); // Передаём массив с пользователями
 
+        this.controlHandler(socket)
+        socket.on('disconnect', () => this.disconnectHandler(playerData));
+    };
+
+    initSocket() {
+        this.io.on('connection', (socket) => this.connectionHandler(socket));
+        setInterval(() => {
+            this.io.sockets.emit('broadcastPlayers', this.playerList)
+        }, 1)
+    }
 }
+
+export default Socket;

@@ -1,85 +1,81 @@
-import { connection } from "./connection"
-import { controls } from "./controls"
 
-export default class Game {
+import Draw from "./Draw";
+import Connection from "./Connection";
+import Controls from "./Controls";
 
-    ctx = null
+class Game {
+
+    /**
+     * Canvas element
+     */
     canvas = null
 
-    drawingLoop = false
+    /** 
+     * Context canvas
+     * @type { CanvasRenderingContext2D }
+     */
+    ctx = null
 
-    players = []
+    /** 
+     * Context canvas
+     * @type { Draw }
+     */
+    draw = null
 
-    ownPlayer = null
+    /** 
+     * Context canvas
+     * @type { Connection }
+     */
+    connection = null
 
-    controls = null;
+    /** 
+     * Context canvas
+     * @type { Controls }
+     */
+    controls = null
 
-    socket = null;
-
-    connection = new connection(this);
-
+    /**
+     * Construct Game
+     * @param {Object} canvas Canvas Dom object
+     */
     constructor(canvas) {
         this.canvas = canvas
-        this.ctx = canvas.getContext("2d");
+        this.ctx = this.canvas.getContext("2d");
+        this.draw = new Draw(this);
+        this.connection = new Connection(this)
+        this.controls = new Controls()
     }
 
     start() {
-        this.connection.connect();
-        this.connection.eventHandlers();
-
-        this.controls = new controls()
-        this.drawingLoop = true;
-        window.requestAnimationFrame(() => { this.draw() });
+        console.log("start");
+        this.connect()
+        this.draw.startLoop();
+        this.control();
     }
 
-    movement() {
-        if (this.controls.up) {
-            //this.ownPlayer.sphere.position.y -= 5;
-            this.connection.socket.emit('playerMovementUp')
-        }
-        if (this.controls.down) {
-            //this.ownPlayer.sphere.position.y += 5;
-            this.connection.socket.emit('playerMovementDown')
-        }
-        if (this.controls.right) {
-            // this.ownPlayer.sphere.position.x += 5
-            this.connection.socket.emit('playerMovementRight')
-        }
-        if (this.controls.left) {
-            //this.ownPlayer.sphere.position.x -= 5
-            this.connection.socket.emit('playerMovementLeft')
-        }
+    connect() {
+        this.connection.connect()
     }
 
-    background() {
-        this.ctx.fillStyle = "#009999";
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    control() {
+        console.log("Control Initialize");
+        // this.controls.addEventListener('keypress', () => {
+        //     console.log('key is pressed');
+        // })
+        setInterval(() => {
+            if (this.controls.up) {
+                this.connection.socket.emit('playerMovementUp')
+            }
+            if (this.controls.down) {
+                this.connection.socket.emit('playerMovementDown')
+            }
+            if (this.controls.right) {
+                this.connection.socket.emit('playerMovementRight')
+            }
+            if (this.controls.left) {
+                this.connection.socket.emit('playerMovementLeft')
+            }
+        }, 8);
     }
-
-    drawBlobs() {
-
-        this.players.forEach((player) => {
-            player.sphere.draw(this.ctx)
-        });
-        // if (this.ownPlayer) {
-        //     console.log(this.ownPlayer);
-        //     this.ownPlayer.sphere.draw(this.ctx)
-        // }
-
-        // if (this.ownPlayer) {
-        //     this.ownPlayer.sphere.draw(this.ctx);
-        // }
-
-    }
-
-    draw() {
-        //loop
-        this.background();
-        this.drawBlobs();
-        this.movement();
-        if (this.drawingLoop) {
-            window.requestAnimationFrame(() => { this.draw() });
-        }
-    }
-
 }
+export default Game;
