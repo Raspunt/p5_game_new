@@ -39,9 +39,9 @@ class Connection {
         console.log("event handlers init");
         console.log(this.game.draw.objects);
 
+        this.socket.on('setPlayer', (playerData) => this.setPlayerHandle(playerData))
         this.socket.on('setPlayers', (data) => this.setPlayersHandle(data));
         this.socket.on('unsetPlayer', (playerData) => this.unsetPlayerHandle(playerData));
-        this.socket.on('setPlayer', (playerData) => this.setPlayerHandle(playerData))
         this.socket.on('broadcastPlayers', (data) => this.broadcastPlayersHandle(data));
 
 
@@ -55,21 +55,21 @@ class Connection {
             if (player) {
                 player.x = playerData.pos.x;
                 player.y = playerData.pos.y;
-                player.r = playerData.pos.r;
+                player.r = playerData.options.radius;
             }
 
         });
     }
 
     setPlayersHandle(data) {
-        console.log('setPlayersHandle');
+        console.log(data);
         let players = [];
         data.forEach(playerData => {
             const pl = new PlayerObject(
                 'white',
                 playerData.pos.x,
                 playerData.pos.y,
-                playerData.pos.r,
+                playerData.options.radius,
                 playerData.id
             );
             pl.ctx = this.game.ctx;
@@ -90,11 +90,12 @@ class Connection {
         if (this.game.draw.objects.find((object) => playerData?.id == object.id)) {
             return;
         }
+
         const pl = new PlayerObject(
             'white',
             playerData.pos.x,
             playerData.pos.y,
-            playerData.pos.r,
+            playerData.options.radius,
             playerData.id
         );
         pl.ctx = this.game.ctx;

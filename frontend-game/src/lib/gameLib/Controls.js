@@ -21,19 +21,21 @@ class Controls extends EventTarget {
         this.keyUp()
         this.eventTabActive();
         this.game = game
-        this.keypressEvent = new CustomEvent("keypressDown");
+        this.keypressDownEvent = new CustomEvent("keypressDown");
+        this.keypressUpEvent = new CustomEvent("keypressUp");
     }
 
     eventTabActive() {
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
-                this.tabActive = false;
-                this.down = false;
-                this.up = false;
-                this.right = false;
-                this.left = false;
+                this.game.connection.socket.emit("keypressAllDown");
+                // this.tabActive = false;
+                // this.down = false;
+                // this.up = false;
+                // this.right = false;
+                // this.left = false;
             } else {
-                this.tabActive = true;
+                // this.tabActive = true;
             }
         });
     }
@@ -41,39 +43,53 @@ class Controls extends EventTarget {
     // Создать систему отписки от событий
     keyDown() {
         document.addEventListener('keydown', (key) => {
-            this.dispatchEvent(this.keypressEvent);
             const k = key.key
-            if (k == 'w') {
-                this.up = true
-            }
-            if (k == 'a') {
-                this.left = true
-            }
-            if (k == 's') {
-                this.down = true;
-            }
-            if (k == 'd') {
-                this.right = true;
-            }
+            //this.dispatchKeypressDown(k);
+            this.game.connection.socket.emit("keypressDown", k);
+            // if (k == 'w') {
+            //     this.up = true
+            // }
+            // if (k == 'a') {
+            //     this.left = true
+            // }
+            // if (k == 's') {
+            //     this.down = true;
+            // }
+            // if (k == 'd') {
+            //     this.right = true;
+            // }
         })
     }
 
     keyUp() {
         document.addEventListener('keyup', (key) => {
             const k = key.key
-            if (k == 'w') {
-                this.up = false
-            }
-            if (k == 'a') {
-                this.left = false
-            }
-            if (k == 's') {
-                this.down = false;
-            }
-            if (k == 'd') {
-                this.right = false;
-            }
+            //this.dispatchKeypressUp(k);
+            this.game.connection.socket.emit("keypressUp", k);
+
+            // if (k == 'w') {
+            //     this.up = false
+            // }
+            // if (k == 'a') {
+            //     this.left = false
+            // }
+            // if (k == 's') {
+            //     this.down = false;
+            // }
+            // if (k == 'd') {
+            //     this.right = false;
+            // }
         })
+    }
+
+    dispatchKeypressDown(key) {
+        const event = new CustomEvent("keypressDown", key);
+        this.dispatchEvent(event);
+    }
+
+    dispatchKeypressUp(key) {
+        const event = new CustomEvent("keypressUp", key);
+        this.dispatchEvent(event);
     }
 
     // sendPacket() {

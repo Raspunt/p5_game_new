@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv'
-import { Server } from "socket.io";
-import Socket from '../socket/index.js';
+import { Server as SocketServer } from "socket.io";
+import Server from '../server/index.js';
 
 dotenv.config({ path: '.env' });
 
@@ -10,13 +10,13 @@ var io = null;
 
 function startServer() {
     httpApp.listen(process.env.HTTP_PORT, () => {
-        io = new Server(httpApp, {
+        io = new SocketServer(httpApp, {
             cors: {
                 origin: process.env.HOST_ORIGIN,
                 methods: ["GET", "POST"]
             }
         });
-        const socketMain = new Socket(io);
+        const socketMain = new Server(io);
         socketMain.initSocket();
 
         console.log(`http://${process.env.HOST}:${process.env.HTTP_PORT}`);

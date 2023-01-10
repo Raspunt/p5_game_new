@@ -23,13 +23,13 @@ class Game {
     draw = null
 
     /** 
-     * Context canvas
+     * Connection instance
      * @type { Connection }
      */
     connection = null
 
     /** 
-     * Context canvas
+     * Control instance
      * @type { Controls }
      */
     controls = null
@@ -42,8 +42,8 @@ class Game {
         this.canvas = canvas
         this.ctx = this.canvas.getContext("2d");
         this.draw = new Draw(this);
-        this.connection = new Connection(this)
-        this.controls = new Controls()
+        this.connection = new Connection(this);
+        this.controls = new Controls(this);
     }
 
     start() {
@@ -61,21 +61,21 @@ class Game {
         console.log("Control Initialize");
         // this.controls.addEventListener('keypress', () => {
         //     console.log('key is pressed');
-        // })
-        setInterval(() => {
-            if (this.controls.up) {
-                this.connection.socket.emit('playerMovementUp')
-            }
-            if (this.controls.down) {
-                this.connection.socket.emit('playerMovementDown')
-            }
-            if (this.controls.right) {
-                this.connection.socket.emit('playerMovementRight')
-            }
-            if (this.controls.left) {
-                this.connection.socket.emit('playerMovementLeft')
-            }
-        }, 8);
+        // // })
+        // setInterval(() => {
+        //     if (this.controls.up) {
+        //         this.connection.socket.emit('playerMovementUp')
+        //     }
+        //     if (this.controls.down) {
+        //         this.connection.socket.emit('playerMovementDown')
+        //     }
+        //     if (this.controls.right) {
+        //         this.connection.socket.emit('playerMovementRight')
+        //     }
+        //     if (this.controls.left) {
+        //         this.connection.socket.emit('playerMovementLeft')
+        //     }
+        // }, 8);
     }
 }
 export default Game;

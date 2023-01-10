@@ -70,7 +70,6 @@ class Draw {
 
         this.drawStartObjects();
         this.drawObjects();
-
         //return;
 
         window.requestAnimationFrame(() => this.loop());
